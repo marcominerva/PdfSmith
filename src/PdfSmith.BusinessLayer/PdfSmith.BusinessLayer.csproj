@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Scriban" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PdfSmith.DataAccessLayer\PdfSmith.DataAccessLayer.csproj" />
     <ProjectReference Include="..\PdfSmith.Shared\PdfSmith.Shared.csproj" />
   </ItemGroup>

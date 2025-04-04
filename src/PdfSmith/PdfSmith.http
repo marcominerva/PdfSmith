@@ -1,6 +1,16 @@
-@PdfSmith_HostAddress = http://localhost:5103
+@HostAddress = https://localhost:7226
+@ApiKey = f1I7S5GXa4wQDgLQWgz0
 
-GET {{PdfSmith_HostAddress}}/weatherforecast/
+POST {{HostAddress}}/api/pdf
+x-api-key: {{ApiKey}}
+Content-Type: application/json
 Accept: application/json
 
+{
+    "template": "Hello, \\{\\{ Model.Name \\}\\}!",
+    "model": {
+        "Name": "World"
+    },
+    "templateEngine": "scriban"
+}
 ###

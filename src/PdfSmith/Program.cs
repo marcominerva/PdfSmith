@@ -1,5 +1,8 @@
+using System.Globalization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Timeouts;
+using PdfSmith.BusinessLayer.Templating;
+using PdfSmith.Shared.Models;
 using SimpleAuthentication;
 using TinyHelpers.AspNetCore.Extensions;
 
@@ -7,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSimpleAuthentication(builder.Configuration);
+
+builder.Services.AddKeyedSingleton<ITemplateEngine, ScribanTemplateEngine>("scriban");
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -68,9 +73,13 @@ app.UseAuthorization();
 
 app.UseRateLimiter();
 
-app.MapGet("/api/test", () =>
+app.MapPost("/api/pdf", async (PdfGenerationRequest request, IServiceProvider serviceProvider, HttpContext httpContext) =>
 {
-    return TypedResults.Ok();
+    var templateEngine = serviceProvider.GetRequiredKeyedService<ITemplateEngine>(request.TemplateEngine.ToLowerInvariant());
+    var model = request.Model.RootElement.GetRawText();
+
+    var result = await templateEngine.RenderAsync(request.Template, model, CultureInfo.CurrentCulture, httpContext.RequestAborted);
+    return TypedResults.Ok(result);
 })
 .RequireAuthorization()
 .RequireRateLimiting("PdfGeneration")
