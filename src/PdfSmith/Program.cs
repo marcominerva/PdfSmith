@@ -1,4 +1,6 @@
+using System.Dynamic;
 using System.Globalization;
+using System.Text.Json;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Timeouts;
 using PdfSmith.BusinessLayer.Templating;
@@ -76,7 +78,7 @@ app.UseRateLimiter();
 app.MapPost("/api/pdf", async (PdfGenerationRequest request, IServiceProvider serviceProvider, HttpContext httpContext) =>
 {
     var templateEngine = serviceProvider.GetRequiredKeyedService<ITemplateEngine>(request.TemplateEngine.ToLowerInvariant());
-    var model = request.Model.RootElement.GetRawText();
+    var model = JsonSerializer.Deserialize<ExpandoObject>(request.Model.RootElement.GetRawText(), JsonSerializerOptions.Web)!;
 
     var result = await templateEngine.RenderAsync(request.Template, model, CultureInfo.CurrentCulture, httpContext.RequestAborted);
     return TypedResults.Ok(result);

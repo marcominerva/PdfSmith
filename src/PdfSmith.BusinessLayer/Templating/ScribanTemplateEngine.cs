@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scriban.Runtime;
-using Scriban;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.Globalization;
 using PdfSmith.Shared.Models;
+using Scriban;
+using Scriban.Runtime;
 
 namespace PdfSmith.BusinessLayer.Templating;
 
