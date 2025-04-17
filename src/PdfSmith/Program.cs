@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Timeouts;
+using Microsoft.AspNetCore.Localization;
 using OperationResults.AspNetCore.Http;
 using PdfSmith.BusinessLayer.Services;
 using PdfSmith.BusinessLayer.Services.Interfaces;
@@ -7,6 +9,7 @@ using PdfSmith.BusinessLayer.Templating;
 using PdfSmith.Shared.Models;
 using SimpleAuthentication;
 using TinyHelpers.AspNetCore.Extensions;
+using TinyHelpers.AspNetCore.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +19,19 @@ builder.Services.AddSimpleAuthentication(builder.Configuration);
 builder.Services.AddKeyedSingleton<ITemplateEngine, ScribanTemplateEngine>("scriban");
 builder.Services.AddSingleton<IPdfGeneratorService, PdfGeneratorService>();
 
+builder.Services.AddRequestLocalization(options =>
+{
+    var supportedCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.AddPolicy("PdfGeneration", context =>
     {
-        return RateLimitPartition.GetFixedWindowLimiter(context.User.Identity?.Name ?? "Default", _ => new FixedWindowRateLimiterOptions
+        return RateLimitPartition.GetFixedWindowLimiter(context.User.Identity?.Name ?? "Default", _ => new()
         {
             PermitLimit = 3,
             Window = TimeSpan.FromSeconds(30),
@@ -48,6 +59,7 @@ builder.Services.AddRequestTimeouts();
 builder.Services.AddOpenApi(options =>
 {
     options.AddSimpleAuthentication(builder.Configuration);
+    options.AddAcceptLanguageHeader();
 });
 
 builder.Services.AddDefaultProblemDetails();
@@ -70,6 +82,8 @@ app.UseSwaggerUI(options =>
 
 app.UseRouting();
 //app.UseCors();
+
+app.UseRequestLocalization();
 
 app.UseAuthentication();
 app.UseAuthorization();
