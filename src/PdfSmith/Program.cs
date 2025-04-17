@@ -75,6 +75,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
+app.UseRequestTimeouts();
 
 app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfGeneratorService pdfGeneratorService, HttpContext httpContext) =>
 {
