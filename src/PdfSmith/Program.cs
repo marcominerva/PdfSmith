@@ -92,5 +92,7 @@ app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfGeneratorServic
     TimeoutStatusCode = StatusCodes.Status408RequestTimeout
 });
 
+//Microsoft.Playwright.Program.Main(["install", "chromium"]);
+
 app.Run();
 

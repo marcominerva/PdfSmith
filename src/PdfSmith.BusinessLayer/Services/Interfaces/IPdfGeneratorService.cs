@@ -5,5 +5,5 @@ namespace PdfSmith.BusinessLayer.Services.Interfaces;
 
 public interface IPdfGeneratorService
 {
-    Task<Result<StreamFileContent>> GeneratePdfAsync(PdfGenerationRequest request, CancellationToken cancellationToken);
+    Task<Result<ByteArrayFileContent>> GeneratePdfAsync(PdfGenerationRequest request, CancellationToken cancellationToken);
 }
