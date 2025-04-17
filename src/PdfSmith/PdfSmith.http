@@ -7,7 +7,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "template": "Hello, \\{\\{ Model.Name \\}\\}!",
+    "template": "Hello, {{ Model.Name }}!",
     "model": {
         "Name": "World"
     },
