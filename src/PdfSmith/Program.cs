@@ -1,7 +1,8 @@
-using System.Globalization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Timeouts;
-using PdfSmith.BusinessLayer.Extensions;
+using OperationResults.AspNetCore.Http;
+using PdfSmith.BusinessLayer.Services;
+using PdfSmith.BusinessLayer.Services.Interfaces;
 using PdfSmith.BusinessLayer.Templating;
 using PdfSmith.Shared.Models;
 using SimpleAuthentication;
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSimpleAuthentication(builder.Configuration);
 
 builder.Services.AddKeyedSingleton<ITemplateEngine, ScribanTemplateEngine>("scriban");
+builder.Services.AddSingleton<IPdfGeneratorService, PdfGeneratorService>();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -74,13 +76,12 @@ app.UseAuthorization();
 
 app.UseRateLimiter();
 
-app.MapPost("/api/pdf", async (PdfGenerationRequest request, IServiceProvider serviceProvider, HttpContext httpContext) =>
+app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfGeneratorService pdfGeneratorService, HttpContext httpContext) =>
 {
-    var templateEngine = serviceProvider.GetRequiredKeyedService<ITemplateEngine>(request.TemplateEngine.ToLowerInvariant());
+    var result = await pdfGeneratorService.GeneratePdfAsync(request, httpContext.RequestAborted);
 
-    var model = request.Model.ToExpandoObject();
-    var result = await templateEngine.RenderAsync(request.Template, model, CultureInfo.CurrentCulture, httpContext.RequestAborted);
-    return TypedResults.Ok(result);
+    var response = httpContext.CreateResponse(result);
+    return response;
 })
 .RequireAuthorization()
 .RequireRateLimiting("PdfGeneration")
