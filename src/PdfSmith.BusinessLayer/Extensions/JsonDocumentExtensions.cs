@@ -37,7 +37,7 @@ public static class JsonDocumentExtensions
         {
             JsonValueKind.Object => ConvertElement(element),
             JsonValueKind.Array => element.EnumerateArray().Select(ConvertValue).ToList(),
-            JsonValueKind.String => ParseStringValue(element.GetString()),
+            JsonValueKind.String => ParseStringValue(element),
             JsonValueKind.Number => element.TryGetInt64(out var number) ? number : element.GetDouble(),
             JsonValueKind.True or JsonValueKind.False => element.GetBoolean(),
             JsonValueKind.Null => null,
@@ -45,21 +45,27 @@ public static class JsonDocumentExtensions
             _ => throw new NotSupportedException($"Unsupported JsonValueKind: {element.ValueKind}")
         };
 
-        static object? ParseStringValue(string? value)
+        static object? ParseStringValue(JsonElement element)
         {
+            var value = element.GetString();
             if (string.IsNullOrEmpty(value))
             {
                 return value;
             }
 
-            if (DateTime.TryParse(value, CultureInfo.InvariantCulture, out var dateTime))
+            //if (element.TryGetDateTimeOffset(out var dateTimeOffset))
+            //{
+            //    return dateTimeOffset;
+            //}
+
+            if (element.TryGetGuid(out var guid))
             {
-                return dateTime;
+                return guid;
             }
 
-            if (DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, out var dateTimeOffset))
+            if (element.TryGetDateTime(out var dateTime))
             {
-                return dateTimeOffset;
+                return dateTime;
             }
 
             if (DateOnly.TryParse(value, CultureInfo.InvariantCulture, out var dateOnly))
