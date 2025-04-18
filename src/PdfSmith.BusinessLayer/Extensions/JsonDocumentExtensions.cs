@@ -39,8 +39,7 @@ public static class JsonDocumentExtensions
             JsonValueKind.Array => element.EnumerateArray().Select(ConvertValue).ToList(),
             JsonValueKind.String => ParseStringValue(element.GetString()),
             JsonValueKind.Number => element.TryGetInt64(out var number) ? number : element.GetDouble(),
-            JsonValueKind.True => true,
-            JsonValueKind.False => false,
+            JsonValueKind.True or JsonValueKind.False => element.GetBoolean(),
             JsonValueKind.Null => null,
 
             _ => throw new NotSupportedException($"Unsupported JsonValueKind: {element.ValueKind}")
