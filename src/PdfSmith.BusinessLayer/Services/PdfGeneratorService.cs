@@ -37,11 +37,24 @@ public class PdfGeneratorService(IServiceProvider serviceProvider) : IPdfGenerat
         await page.SetContentAsync(result.RenderedText);
 
         // Generate the PDF
+        var options = request.Options ?? new();
         var output = await page.PdfAsync(new()
         {
-            Format = "A4", // or "letter"
-            Landscape = false,
+            Format = options.PageSize ?? "A4",
+            Landscape = options.Orientation is PdfOrientation.Landscape,
+            PrintBackground = true,
+            Margin = options.Margins is not null ? new()
+            {
+                Top = options.Margins.Top,
+                Bottom = options.Margins.Bottom,
+                Left = options.Margins.Left,
+                Right = options.Margins.Right
+            }
+            : null,
         });
+
+        await context.CloseAsync();
+        await browser.CloseAsync();
 
         var byteArrayFileContent = new ByteArrayFileContent(output, MediaTypeNames.Application.Pdf, $"{Guid.CreateVersion7():N}.pdf");
         return byteArrayFileContent;

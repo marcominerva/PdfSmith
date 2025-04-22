@@ -11,6 +11,16 @@ Accept: application/json
     "model": {
         "Name": "World"
     },
+    "options": {
+        "pageSize": "A4",
+        "orientation": "portrait",
+        "margins": {
+            "top": "50px",
+            "bottom": "50px",
+            "left": "50px",
+            "right": "50px"
+        }
+    },
     "templateEngine": "scriban"
 }
 
