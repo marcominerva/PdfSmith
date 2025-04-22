@@ -53,11 +53,6 @@ public static class JsonDocumentExtensions
                 return value;
             }
 
-            //if (element.TryGetDateTimeOffset(out var dateTimeOffset))
-            //{
-            //    return dateTimeOffset;
-            //}
-
             if (element.TryGetGuid(out var guid))
             {
                 return guid;
@@ -68,14 +63,9 @@ public static class JsonDocumentExtensions
                 return dateTime;
             }
 
-            if (DateOnly.TryParse(value, CultureInfo.InvariantCulture, out var dateOnly))
+            if (TimeSpan.TryParse(value, CultureInfo.InvariantCulture, out var timeSpan))
             {
-                return dateOnly;
-            }
-
-            if (TimeOnly.TryParse(value, CultureInfo.InvariantCulture, out var timeOnly))
-            {
-                return timeOnly;
+                return timeSpan;
             }
 
             return value;

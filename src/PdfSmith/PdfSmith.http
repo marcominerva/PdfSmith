@@ -13,4 +13,51 @@ Accept: application/json
     },
     "templateEngine": "scriban"
 }
+
+###
+
+POST {{HostAddress}}/api/pdf
+x-api-key: {{ApiKey}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "template": "<ul id="products">
+        {{- for product in Model.Products }}
+        <li>
+            <h2>{{ product.Name }} ({{ product.Id }})</h2>
+            Price: {{ product.Price | object.format "C" }}
+            {{ product.Description | string.truncate 15 }}
+            {{ product.Date | date.to_string '%d/%m/%Y %R' }}
+        </li>
+        {{- end }}
+    </ul>",
+    "model": {
+        "Products": [
+        {
+          "Id": "2f57880d-63e2-4a59-a4b9-197ee19356ce",
+          "Name": "Apple",
+          "Price": 1.99,
+          "Description": "A really delicious apple",
+          "Date": "2025-04-18T11:40:51.1584495"
+        },
+        {
+          "Id": "918dbc3c-9891-4f30-8752-59a64320efa4",
+          "Name": "Banana",
+          "Price": 0.99,
+          "Description": "A yellow banana",
+          "Date": "2025-04-14T11:40:51.163762"
+        },
+        {
+          "Id": "06b62578-2d81-4165-89d9-aa4998ae23fa",
+          "Name": "Orange",
+          "Price": 1.49,
+          "Description": "A juicy and big orange",
+          "Date": "2025-05-31T11:40:51.1637651"
+        }
+      ]
+    },
+    "templateEngine": "scriban"
+}
+
 ###

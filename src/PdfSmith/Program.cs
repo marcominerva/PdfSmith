@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net.Mime;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Localization;
@@ -98,6 +99,8 @@ app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfGeneratorServic
     var response = httpContext.CreateResponse(result);
     return response;
 })
+.Accepts<PdfGenerationRequest>(MediaTypeNames.Application.Json)
+.Produces(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Pdf)
 .RequireAuthorization()
 .RequireRateLimiting("PdfGeneration")
 .WithRequestTimeout(new RequestTimeoutPolicy
