@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Localization;
 using OperationResults.AspNetCore.Http;
+using PdfSmith.BusinessLayer.Generators;
 using PdfSmith.BusinessLayer.Services;
 using PdfSmith.BusinessLayer.Services.Interfaces;
 using PdfSmith.BusinessLayer.Templating;
@@ -24,7 +25,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddSimpleAuthentication(builder.Configuration);
 
 builder.Services.AddKeyedSingleton<ITemplateEngine, ScribanTemplateEngine>("scriban");
-builder.Services.AddSingleton<IPdfGeneratorService, PdfGeneratorService>();
+builder.Services.AddSingleton<IPdfGenerator, ChromiumPdfGenerator>();
+builder.Services.AddSingleton<IPdfService, PdfService>();
 
 builder.Services.AddRequestLocalization(options =>
 {
@@ -98,9 +100,9 @@ app.UseAuthorization();
 app.UseRateLimiter();
 app.UseRequestTimeouts();
 
-app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfGeneratorService pdfGeneratorService, HttpContext httpContext) =>
+app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfService pdfService, HttpContext httpContext) =>
 {
-    var result = await pdfGeneratorService.GeneratePdfAsync(request, httpContext.RequestAborted);
+    var result = await pdfService.GeneratePdfAsync(request, httpContext.RequestAborted);
 
     var response = httpContext.CreateResponse(result);
     return response;

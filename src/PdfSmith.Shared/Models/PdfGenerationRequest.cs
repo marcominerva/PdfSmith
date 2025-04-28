@@ -21,7 +21,7 @@ public record class PdfGenerationRequest(string Template, JsonDocument Model, Pd
 
 public record class PdfOptions(string PageSize = "A4", PdfOrientation Orientation = PdfOrientation.Portrait, PdfMargins? Margins = null);
 
-public record class PdfMargins(string Top = "50px", string Bottom = "50px", string Left = "50px", string Right = "50px");
+public record class PdfMargins(double Top = 50, double Bottom = 50, double Left = 50, double Right = 50);
 
 public enum PdfOrientation
 {
