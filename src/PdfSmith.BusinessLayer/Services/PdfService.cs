@@ -19,7 +19,7 @@ public class PdfService(IServiceProvider serviceProvider, IPdfGenerator pdfGener
 
         if (templateEngine is null)
         {
-            return Result.Fail(FailureReasons.ClientError, "Unable to render the template", $"The template engine {request.TemplateEngine} isn't been registered");
+            return Result.Fail(FailureReasons.ClientError, "Unable to render the template", $"The template engine {request.TemplateEngine} has not been registered");
         }
 
         string? content = null;

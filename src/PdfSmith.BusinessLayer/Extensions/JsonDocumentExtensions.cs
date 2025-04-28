@@ -25,10 +25,8 @@ public static class JsonDocumentExtensions
         {
             return element.EnumerateArray().Select(ConvertValue).ToList();
         }
-        else
-        {
-            throw new InvalidOperationException($"Unsupported JsonValueKind: {element.ValueKind}");
-        }
+
+        throw new InvalidOperationException($"Unsupported JSON ValueKind: {element.ValueKind}");
     }
 
     private static object? ConvertValue(JsonElement element)
@@ -42,7 +40,7 @@ public static class JsonDocumentExtensions
             JsonValueKind.True or JsonValueKind.False => element.GetBoolean(),
             JsonValueKind.Null => null,
 
-            _ => throw new NotSupportedException($"Unsupported JsonValueKind: {element.ValueKind}")
+            _ => throw new NotSupportedException($"Unsupported JSON ValueKind: {element.ValueKind}")
         };
 
         static object? ParseStringValue(JsonElement element)
