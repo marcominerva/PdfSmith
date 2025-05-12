@@ -4,7 +4,7 @@ using Bogus;
 using PdfSmith.Shared.Models;
 
 var httpClient = new HttpClient();
-httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", "key-2");
+httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", "42");
 httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("it-IT"));
 
 var productFaker = new Faker<Product>();
@@ -83,7 +83,7 @@ var request = new PdfGenerationRequest("""
             <p align="right">Total: {{ Model.Total | object.format "C" }}</p>
         </body>
     </html>
-    """, order);
+    """, order, new() { Margins = new() { Top = 50, Bottom = 50, Left = 60, Right = 60 } });
 
 using var response = await httpClient.PostAsJsonAsync("https://localhost:7226/api/pdf", request);
 
