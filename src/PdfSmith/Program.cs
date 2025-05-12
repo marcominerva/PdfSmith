@@ -42,6 +42,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddKeyedSingleton<ITemplateEngine, ScribanTemplateEngine>("scriban");
+builder.Services.AddKeyedSingleton<ITemplateEngine, RazorTemplateEngine>("razor");
+
 builder.Services.AddSingleton<IPdfGenerator, ChromiumPdfGenerator>();
 builder.Services.AddSingleton<IPdfService, PdfService>();
 
