@@ -5,7 +5,7 @@ A powerful REST API service that generates PDF documents from dynamic HTML templ
 ## 🚀 Features
 
 - **Dynamic PDF Generation**: Create PDFs from HTML templates with dynamic data injection
-- **Multiple Template Engines**: Support for both Scriban and Razor template engines
+- **Multiple Template Engines**: Support for Razor, Scriban, and Handlebars template engines
 - **Flexible PDF Options**: Configure page size, orientation, margins, and more
 - **API Key Authentication**: Secure access with subscription-based API keys
 - **Rate Limiting**: Configurable request limits per subscription
@@ -134,7 +134,7 @@ A default administrator account is created automatically with the following conf
 
 ## 🎨 Template Engines
 
-PdfSmith supports two powerful template engines:
+PdfSmith supports three powerful template engines:
 
 ### Razor Template Engine
 
@@ -182,6 +182,35 @@ Scriban is a fast, powerful, safe, and lightweight text templating language.
 </body>
 </html>
 ```
+
+### Handlebars Template Engine
+
+Handlebars provides logic-less templates with a designer-friendly syntax, ideal for collaborative development workflows.
+
+**Key:** `"handlebars"`
+
+**Example:**
+
+```html
+<html>
+<body>
+    <h1>Hello {{Name}}!</h1>
+    <p>Order Date: {{formatDate Date "dd/MM/yyyy"}}</p>
+    <ul>
+    {{#each Items}}
+        <li>{{Name}} - {{formatCurrency Price}}</li>
+    {{/each}}
+    </ul>
+    <p>Total: {{formatCurrency Total}}</p>
+</body>
+</html>
+```
+
+**Built-in Helpers:**
+- `formatCurrency` - Formats decimal values as currency using current culture
+- `formatDate` - Formats dates with optional format string (default: "yyyy-MM-dd")
+- `multiply` - Multiplies two numeric values for calculations within templates
+- Support for DateTime.Now replacement with timezone-aware values
 
 ## 📄 PDF Configuration
 
@@ -338,6 +367,78 @@ var htmlTemplate = """
 """;
 
 var request = new PdfGenerationRequest(htmlTemplate, order, templateEngine: "razor");
+```
+
+### Handlebars Template Example
+
+```csharp
+var order = new
+{
+    CustomerName = "Acme Corp",
+    Date = DateTime.Now,
+    InvoiceNumber = "INV-2024-001",
+    Items = new[]
+    {
+        new { Name = "Product A", Quantity = 2, Price = 29.99m },
+        new { Name = "Product B", Quantity = 1, Price = 49.99m }
+    },
+    Total = 109.97m
+};
+
+var handlebarsTemplate = """
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .invoice-details { margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .total { font-weight: bold; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Invoice</h1>
+        <p>Invoice #{{InvoiceNumber}}</p>
+    </div>
+    
+    <div class="invoice-details">
+        <p><strong>Customer:</strong> {{CustomerName}}</p>
+        <p><strong>Date:</strong> {{formatDate Date "dd/MM/yyyy"}}</p>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each Items}}
+            <tr>
+                <td>{{Name}}</td>
+                <td>{{Quantity}}</td>
+                <td>{{formatCurrency Price}}</td>
+                <td>{{formatCurrency (multiply Quantity Price)}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="total">Total:</td>
+                <td class="total">{{formatCurrency Total}}</td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
+""";
+
+var request = new PdfGenerationRequest(handlebarsTemplate, order, templateEngine: "handlebars");
 ```
 
 ## ⚠️ Error Handling
