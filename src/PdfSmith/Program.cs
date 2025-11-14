@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using MinimalHelpers.FluentValidation;
 using OperationResults.AspNetCore.Http;
 using PdfSmith.BackgroundServices;
