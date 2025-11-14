@@ -4,7 +4,7 @@ namespace PdfSmith.BackgroundServices;
 
 public class InstallPlaywrightBackgroundService(PlaywrightHealthCheck playwrightHealthCheck, ILogger<InstallPlaywrightBackgroundService> logger) : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // On Windows, it is installed in %USERPROFILE%\AppData\Local\ms-playwright by default.
         // We can use PLAYWRIGHT_BROWSERS_PATH environment variable to change the default location.
@@ -26,5 +26,7 @@ public class InstallPlaywrightBackgroundService(PlaywrightHealthCheck playwright
         };
 
         playwrightHealthCheck.Status = playwrightStatus;
+
+        return Task.CompletedTask;
     }
 }
