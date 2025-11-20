@@ -35,7 +35,7 @@ A powerful REST API service that generates PDF documents from dynamic HTML templ
 
 ### Prerequisites
 
-- .NET 9.0 SDK or later
+- .NET 10.0 SDK or later
 - Chromium browser (automatically installed via Playwright)
 
 ### Setup
