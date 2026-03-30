@@ -278,7 +278,7 @@ app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfService pdfServ
 .RequireRateLimiting("PdfGeneration")
 .WithRequestTimeout(new RequestTimeoutPolicy
 {
-    Timeout = TimeSpan.FromSeconds(30),
+    Timeout = TimeSpan.FromSeconds(60),
     TimeoutStatusCode = StatusCodes.Status408RequestTimeout
 });
 
