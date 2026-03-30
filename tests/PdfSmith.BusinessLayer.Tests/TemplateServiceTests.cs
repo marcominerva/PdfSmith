@@ -31,9 +31,9 @@ public class TemplateServiceTests
         var expectedHtml = "<h1>Hello World</h1>\n";
 
         templateEngine.RenderAsync(Arg.Any<string>(), Arg.Any<object?>(), Arg.Any<CultureInfo>(), Arg.Any<CancellationToken>())
-            .Returns(markdownContent);
-        markdownConverter.IsMarkdownAsync(markdownContent).Returns(true);
-        markdownConverter.ConvertToHtmlAsync(markdownContent).Returns(expectedHtml);
+            .Returns(Task.FromResult(markdownContent));
+        markdownConverter.IsMarkdownAsync(markdownContent).Returns(Task.FromResult(true));
+        markdownConverter.ConvertToHtmlAsync(markdownContent).Returns(Task.FromResult(expectedHtml));
         timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
 
         var request = new TemplateGenerationRequest("# Hello World", (JsonDocument?)null, "scriban");
@@ -52,8 +52,8 @@ public class TemplateServiceTests
         var htmlContent = "<html><body><h1>Hello</h1></body></html>";
 
         templateEngine.RenderAsync(Arg.Any<string>(), Arg.Any<object?>(), Arg.Any<CultureInfo>(), Arg.Any<CancellationToken>())
-            .Returns(htmlContent);
-        markdownConverter.IsMarkdownAsync(htmlContent).Returns(false);
+            .Returns(Task.FromResult(htmlContent));
+        markdownConverter.IsMarkdownAsync(htmlContent).Returns(Task.FromResult(false));
         timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
 
         var request = new TemplateGenerationRequest("<html><body><h1>Hello</h1></body></html>", (JsonDocument?)null, "scriban");
