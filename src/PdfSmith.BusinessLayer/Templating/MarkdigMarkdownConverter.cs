@@ -48,6 +48,8 @@ public partial class MarkdigMarkdownConverter : IMarkdownConverter
     [GeneratedRegex(@"^\s*<(html|head|body|div|section|article|header|footer|nav|main|table|form|script|style|link|meta)\b", RegexOptions.IgnoreCase | RegexOptions.Multiline)]
     private static partial Regex HtmlBlockTagRegex { get; }
 
+    // Matches common Markdown syntax: headings (# ), horizontal rules (*** or ---), unordered lists (-, *, +),
+    // ordered lists (1.), blockquotes (>), links ([text](url)), emphasis (*text*, **text**), and inline code (`code`).
     [GeneratedRegex(@"(^#{1,6}\s)|(^\*{3,}$)|(^-{3,}$)|(^\s*[-*+]\s)|(^\s*\d+\.\s)|(^\s*>)|\[.+\]\(.+\)|(\*{1,2}.+\*{1,2})|(_{1,2}.+_{1,2})|(`.+`)", RegexOptions.Multiline)]
     private static partial Regex MarkdownPatternRegex { get; }
 }
