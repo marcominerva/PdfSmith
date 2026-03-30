@@ -24,7 +24,7 @@
         <section class="hero">
             <div class="container">
                 <h1>Dynamic PDF Generation Made Simple</h1>
-                <p>Create beautiful PDF documents on-the-fly using templates and data with our powerful REST API</p>
+                <p>Create beautiful PDF documents on-the-fly using HTML templates, Markdown content, and data with our powerful REST API</p>
                 <div class="cta-buttons">
                     <a href="/swagger" class="btn btn-primary">🚀 Explore API</a>
                     <a href="#features" class="btn btn-secondary">📚 Learn More</a>
@@ -61,6 +61,11 @@
                         <p>Generate PDFs that look great on any device with responsive HTML templates</p>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3>Markdown Support</h3>
+                        <p>Write templates in Markdown and let PdfSmith automatically convert them to beautiful HTML for PDF generation</p>
+                    </div>
+                    <div class="feature-card">
                         <div class="feature-icon">🌍</div>
                         <h3>Internationalization</h3>
                         <p>Full support for multiple cultures and languages in your PDF documents</p>
@@ -93,7 +98,7 @@
       "Name": "World"
    },
    "templateEngine": "razor",
-   "pdfOptions": {
+   "options": {
       "margin": {
          "top": "2.5cm",
          "bottom": "2cm",

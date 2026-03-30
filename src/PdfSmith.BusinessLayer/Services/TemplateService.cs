@@ -43,7 +43,8 @@ public class TemplateService(IServiceProvider serviceProvider, ITimeZoneService 
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (await markdownConverter.IsMarkdownAsync(content))
+            var isMarkdown = await markdownConverter.IsMarkdownAsync(content);
+            if (isMarkdown)
             {
                 content = await markdownConverter.ConvertToHtmlAsync(content);
             }

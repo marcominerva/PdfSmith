@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PdfSmith.BusinessLayer.Services;
@@ -18,9 +17,9 @@ public class TemplateServiceTests
     private TemplateService CreateService()
     {
         var serviceProvider = Substitute.For<IServiceProvider, IKeyedServiceProvider>();
-        ((IKeyedServiceProvider)serviceProvider).GetKeyedService(typeof(ITemplateEngine), "scriban").Returns(templateEngine);
+        ((IKeyedServiceProvider)serviceProvider).GetKeyedService<ITemplateEngine>("scriban").Returns(templateEngine);
 
-        return new TemplateService(serviceProvider, timeZoneService, markdownConverter);
+        return new(serviceProvider, timeZoneService, markdownConverter);
     }
 
     [Fact]
@@ -30,13 +29,12 @@ public class TemplateServiceTests
         var markdownContent = "# Hello World";
         var expectedHtml = "<h1>Hello World</h1>\n";
 
-        templateEngine.RenderAsync(Arg.Any<string>(), Arg.Any<object?>(), Arg.Any<CultureInfo>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(markdownContent));
-        markdownConverter.IsMarkdownAsync(markdownContent).Returns(Task.FromResult(true));
-        markdownConverter.ConvertToHtmlAsync(markdownContent).Returns(Task.FromResult(expectedHtml));
+        templateEngine.RenderAsync(Arg.Any<string>(), Arg.Any<object?>(), Arg.Any<CultureInfo>(), Arg.Any<CancellationToken>()).Returns(markdownContent);
+        markdownConverter.IsMarkdownAsync(markdownContent).Returns(true);
+        markdownConverter.ConvertToHtmlAsync(markdownContent).Returns(expectedHtml);
         timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
 
-        var request = new TemplateGenerationRequest("# Hello World", (JsonDocument?)null, "scriban");
+        var request = new TemplateGenerationRequest("# Hello World", null, "scriban");
 
         var result = await service.CreateAsync(request, CancellationToken.None);
 
@@ -51,12 +49,11 @@ public class TemplateServiceTests
         var service = CreateService();
         var htmlContent = "<html><body><h1>Hello</h1></body></html>";
 
-        templateEngine.RenderAsync(Arg.Any<string>(), Arg.Any<object?>(), Arg.Any<CultureInfo>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(htmlContent));
-        markdownConverter.IsMarkdownAsync(htmlContent).Returns(Task.FromResult(false));
+        templateEngine.RenderAsync(Arg.Any<string>(), Arg.Any<object?>(), Arg.Any<CultureInfo>(), Arg.Any<CancellationToken>()).Returns(htmlContent);
+        markdownConverter.IsMarkdownAsync(htmlContent).Returns(false);
         timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
 
-        var request = new TemplateGenerationRequest("<html><body><h1>Hello</h1></body></html>", (JsonDocument?)null, "scriban");
+        var request = new TemplateGenerationRequest("<html><body><h1>Hello</h1></body></html>", null, "scriban");
 
         var result = await service.CreateAsync(request, CancellationToken.None);
 

@@ -1,6 +1,6 @@
 # PDF Smith
 
-A powerful REST API service that generates PDF documents from dynamic HTML templates. PDF Smith supports multiple template engines, offers flexible PDF configuration options, and provides secure API key-based authentication with rate limiting.
+A powerful REST API service that generates PDF documents from dynamic HTML templates or Markdown content. PDF Smith supports multiple template engines, offers flexible PDF configuration options, and provides secure API key-based authentication with rate limiting.
 
 [![CodeQL](https://github.com/marcominerva/PdfSmith/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/marcominerva/PdfSmith/actions/workflows/github-code-scanning/codeql)
 [![Lint Code Base](https://github.com/marcominerva/PdfSmith/actions/workflows/linter.yml/badge.svg)](https://github.com/marcominerva/PdfSmith/actions/workflows/linter.yml)
@@ -9,7 +9,8 @@ A powerful REST API service that generates PDF documents from dynamic HTML templ
 
 ## 🚀 Features
 
-- **Dynamic PDF Generation**: Create PDFs from HTML templates with dynamic data injection
+- **Dynamic PDF Generation**: Create PDFs from HTML templates or Markdown content with dynamic data injection
+- **Markdown Support**: Automatic detection and conversion of Markdown content to HTML before PDF rendering
 - **Multiple Template Engines**: Support for Razor, Scriban, and Handlebars template engines
 - **Flexible PDF Options**: Configure page size, orientation, margins, and more
 - **API Key Authentication**: Secure access with subscription-based API keys
@@ -24,6 +25,7 @@ A powerful REST API service that generates PDF documents from dynamic HTML templ
 - [Authentication](#-authentication)
 - [API Reference](#-api-reference)
 - [Template Engines](#-template-engines)
+- [Markdown Support](#-markdown-support)
 - [PDF Configuration](#-pdf-configuration)
 - [Time Zone Support](#-time-zone-support)
 - [Usage Examples](#-usage-examples)
@@ -225,6 +227,34 @@ Handlebars provides logic-less templates with a designer-friendly syntax, ideal 
 - `multiply` - Multiplies two numeric values for calculations within templates
 - `divide` - Divides two numeric values for calculations within templates
 - `round` - Rounds a numberic value to the specified number of decimals
+
+## 📝 Markdown Support
+
+PdfSmith automatically detects whether the rendered template output is Markdown content and converts it to HTML before generating the PDF. This means you can write your templates using Markdown syntax instead of HTML, and PdfSmith will handle the conversion seamlessly.
+
+### How It Works
+
+1. After the template engine renders the template with the provided model, PdfSmith inspects the output.
+2. If the output contains common Markdown patterns (headings, lists, links, emphasis, etc.) and does not start with HTML block-level tags, it is identified as Markdown.
+3. The Markdown content is then converted to HTML using the [Markdig](https://github.com/xoofx/markdig) library with advanced extensions enabled.
+4. The resulting HTML is used for PDF generation.
+
+### Example
+
+```json
+{
+  "template": "# Hello @Model.Name!\n\nThis is a **Markdown** template.\n\n- Item 1\n- Item 2\n- Item 3\n\n> Generated on @Model.Date.ToString(\"dd/MM/yyyy\")",
+  "model": {
+    "Name": "World",
+    "Date": "2025-01-15T00:00:00"
+  },
+  "templateEngine": "razor"
+}
+```
+
+The Markdown content is automatically detected and converted to HTML, producing a well-formatted PDF with headings, bold text, lists, and blockquotes.
+
+> **Note:** If your template output starts with HTML block-level tags (such as `<html>`, `<div>`, `<table>`, etc.), it will be treated as HTML and no Markdown conversion will occur. This ensures backward compatibility with existing HTML templates.
 
 ## 📄 PDF Configuration
 

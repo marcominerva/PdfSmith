@@ -1,5 +1,8 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.CSharp.RuntimeBinder;
 using PdfSmith.BusinessLayer.Exceptions;
 using PdfSmith.BusinessLayer.Templating.Interfaces;
 using RazorLight;
@@ -24,12 +27,18 @@ public partial class RazorTemplateEngine(IRazorLightEngine engine) : ITemplateEn
                 {sanitizedTemplate}
                 """;
 
-            var result = await engine.CompileRenderStringAsync(sanitizedTemplate, content, model);
+            var key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(content)));
+            var result = await engine.CompileRenderStringAsync(key, content, model);
+
             return result;
         }
         catch (TemplateCompilationException ex)
         {
             throw new TemplateEngineException(ex.Message, ex);
+        }
+        catch (RuntimeBinderException ex)
+        {
+            throw new TemplateEngineException("Template rendering failed. Ensure the model is not null and all referenced properties exist.", ex);
         }
     }
 
