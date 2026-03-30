@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net.Mime;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
@@ -213,6 +214,21 @@ app.MapPost("/api/template", async (TemplateGenerationRequest request, ITemplate
 .WithDescription("Accepts a template (string) and a model (JSON) and returns the rendered HTML as a string. Supports Razor, Scriban, and Handlebars via the 'templateEngine' property. The template is rendered using the request culture and optional time zone header. Useful to preview or validate templates before generating a PDF.")
 .WithValidation<TemplateGenerationRequest>()
 .Produces<TemplateResponse>(StatusCodes.Status200OK)
+.AddOpenApiOperationTransformer((operation, _, _) =>
+{
+    if (operation.RequestBody?.Content?.TryGetValue(MediaTypeNames.Application.Json, out var mediaType) is true)
+    {
+        mediaType.Example = JsonNode.Parse("""
+            {
+              "template": "<h1>Hello @Model.Name!</h1>",
+              "model": { "name": "World" },
+              "templateEngine": "razor"
+            }
+            """);
+    }
+
+    return Task.CompletedTask;
+})
 .RequireAuthorization()
 .WithRequestTimeout(new RequestTimeoutPolicy
 {
@@ -232,6 +248,32 @@ app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfService pdfServ
 .WithDescription("Accepts a template (string) and a model (JSON) and returns a generated PDF document. Supports Razor, Scriban, and Handlebars via the 'templateEngine' property. The model is injected into the template for dynamic content rendering. Additional PDF options and a custom file name can be provided. The template is rendered using the request culture and optional time zone header.")
 .WithValidation<PdfGenerationRequest>()
 .Produces(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Pdf)
+.AddOpenApiOperationTransformer((operation, _, _) =>
+{
+    if (operation.RequestBody?.Content?.TryGetValue(MediaTypeNames.Application.Json, out var mediaType) is true)
+    {
+        mediaType.Example = JsonNode.Parse("""
+            {
+              "template": "<h1>Hello @Model.Name!</h1>",
+              "model": { "name": "World" },
+              "options": {
+                "pageSize": "A4",
+                "orientation": "Portrait",
+                "margin": {
+                  "top": "2.5cm",
+                  "bottom": "2cm",
+                  "left": "2cm",
+                  "right": "2cm"
+                }
+              },
+              "templateEngine": "razor",
+              "fileName": "output.pdf"
+            }
+            """);
+    }
+
+    return Task.CompletedTask;
+})
 .RequireAuthorization()
 .RequireRateLimiting("PdfGeneration")
 .WithRequestTimeout(new RequestTimeoutPolicy
