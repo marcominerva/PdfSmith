@@ -66,6 +66,8 @@ builder.Services.AddKeyedSingleton<ITemplateEngine, ScribanTemplateEngine>("scri
 builder.Services.AddKeyedSingleton<ITemplateEngine, RazorTemplateEngine>("razor");
 builder.Services.AddKeyedSingleton<ITemplateEngine, HandlebarsTemplateEngine>("handlebars");
 
+builder.Services.AddSingleton<IMarkdownConverter, MarkdigMarkdownConverter>();
+
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<IPdfGenerator, ChromiumPdfGenerator>();
 builder.Services.AddSingleton<IPdfService, PdfService>();

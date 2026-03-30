@@ -4,6 +4,10 @@
     <File Path="Directory.Build.props" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/PdfSmith.BusinessLayer.Tests/PdfSmith.BusinessLayer.Tests.csproj" />
+  </Folder>
   <Project Path="src/PdfSmith.BusinessLayer/PdfSmith.BusinessLayer.csproj" />
   <Project Path="src/PdfSmith.DataAccessLayer/PdfSmith.DataAccessLayer.csproj" />
   <Project Path="src/PdfSmith.Shared/PdfSmith.Shared.csproj" />

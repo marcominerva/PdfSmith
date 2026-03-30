@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" Version="12.1.1" />
         <PackageReference Include="Handlebars.Net" Version="2.1.6" />
+        <PackageReference Include="Markdig" Version="1.1.2" />
         <PackageReference Include="Microsoft.Playwright" Version="1.58.0" />
         <PackageReference Include="OperationResultTools" Version="1.0.37" />
         <PackageReference Include="RazorLight" Version="2.3.1" />

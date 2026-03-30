@@ -9,7 +9,7 @@ using PdfSmith.Shared.Models;
 
 namespace PdfSmith.BusinessLayer.Services;
 
-public class TemplateService(IServiceProvider serviceProvider, ITimeZoneService timeZoneService) : ITemplateService
+public class TemplateService(IServiceProvider serviceProvider, ITimeZoneService timeZoneService, IMarkdownConverter markdownConverter) : ITemplateService
 {
     public async Task<Result<TemplateResponse>> CreateAsync(TemplateGenerationRequest request, CancellationToken cancellationToken)
     {
@@ -42,6 +42,11 @@ public class TemplateService(IServiceProvider serviceProvider, ITimeZoneService 
             content = await templateEngine.RenderAsync(request.Template, model, CultureInfo.CurrentCulture, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            if (await markdownConverter.IsMarkdownAsync(content))
+            {
+                content = await markdownConverter.ConvertToHtmlAsync(content);
+            }
         }
         catch (TemplateEngineException ex)
         {
