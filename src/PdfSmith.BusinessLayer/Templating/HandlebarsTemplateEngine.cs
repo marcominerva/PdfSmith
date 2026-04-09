@@ -6,7 +6,7 @@ using PdfSmith.BusinessLayer.Templating.Interfaces;
 
 namespace PdfSmith.BusinessLayer.Templating;
 
-public class HandlebarsTemplateEngine(RequestTimeProvider requestTimeProvider) : ITemplateEngine
+public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : ITemplateEngine
 {
     private readonly Lazy<IHandlebars> handlebarsInstance = new(() => CreateHandlebarsInstance(requestTimeProvider));
 
@@ -32,7 +32,7 @@ public class HandlebarsTemplateEngine(RequestTimeProvider requestTimeProvider) :
         }
     }
 
-    private static IHandlebars CreateHandlebarsInstance(RequestTimeProvider requestTimeProvider)
+    private static IHandlebars CreateHandlebarsInstance(ClientTimeProvider requestTimeProvider)
     {
         var handlebars = Handlebars.Create();
 

@@ -47,7 +47,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ILogEventEnricher, HttpContextEnricher>();
 
 builder.Services.AddSingleton(TimeProvider.System);
-builder.Services.AddSingleton<RequestTimeProvider>();
+builder.Services.AddSingleton<ClientTimeProvider>();
 
 builder.Services.AddSingleton<ITimeZoneService, TimeZoneService>();
 
